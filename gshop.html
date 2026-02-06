@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Gadgets - Luxury Shopping</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #333; }
+        .hero { background: url('https://via.placeholder.com/1920x600?text=Premium+Gadgets') no-repeat center/cover; height: 60vh; display: flex; align-items: center; justify-content: center; color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
+        .hero h1 { font-size: 3rem; font-weight: bold; }
+        .product-card { transition: transform 0.3s, box-shadow 0.3s; border: none; border-radius: 15px; overflow: hidden; }
+        .product-card:hover { transform: translateY(-10px); box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .product-img { height: 250px; object-fit: cover; }
+        .btn-premium { background: linear-gradient(45deg, #ff6b6b, #feca57); border: none; color: white; font-weight: bold; }
+        .btn-premium:hover { background: linear-gradient(45deg, #feca57, #ff6b6b); }
+        .cart-sidebar { position: fixed; top: 0; right: -350px; width: 350px; height: 100%; background: white; box-shadow: -2px 0 10px rgba(0,0,0,0.1); transition: right 0.3s; z-index: 1000; padding: 2rem; overflow-y: auto; }
+        .cart-sidebar.open { right: 0; }
+        .testimonial { background: rgba(255,255,255,0.9); border-radius: 10px; padding: 1rem; margin: 1rem 0; }
+        footer { background: #333; color: white; text-align: center; padding: 2rem 0; }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#"><i class="fas fa-shopping-bag"></i> Premium Gadgets</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#products">Products</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#testimonials">Testimonials</a></li>
+                </ul>
+                <form class="d-flex me-3">
+                    <input class="form-control me-2" type="search" placeholder="Search products..." id="search">
+                    <button class="btn btn-outline-light" type="submit"><i class="fas fa-search"></i></button>
+                </form>
+                <button class="btn btn-outline-light me-2" onclick="toggleLogin()"><i class="fas fa-user"></i> Login</button>
+                <button class="btn btn-outline-light" onclick="openCart()"><i class="fas fa-shopping-cart"></i> Cart (<span id="cart-count">0</span>)</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="text-center">
+            <h1>Discover Luxury Gadgets</h1>
+            <p class="lead">Elevate your lifestyle with premium tech and accessories.</p>
+            <a href="#products" class="btn btn-premium btn-lg">Shop Now</a>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section id="products" class="py-5 bg-light">
+        <div class="container">
+            <h2 class="text-center mb-4">Our Premium Products</h2>
+            <div class="row" id="products-grid">
+                <!-- Products loaded dynamically -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section id="testimonials" class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-4">What Our Customers Say</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="testimonial">
+                        <p>"Absolutely premium quality! The gadgets exceeded my expectations."</p>
+                        <cite>- Alex Johnson</cite>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="testimonial">
+                        <p>"Fast shipping and top-notch design. Highly recommend!"</p>
+                        <cite>- Maria Garcia</cite>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="testimonial">
+                        <p>"The best shopping experience I've had online."</p>
+                        <cite>- Liam Smith</cite>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cart Sidebar -->
+    <div class="cart-sidebar" id="cart-sidebar">
+        <h3><i class="fas fa-shopping-cart"></i> Your Cart</h3>
+        <ul id="cart-items" class="list-group mb-3"></ul>
+        <p class="fw-bold">Total: $<span id="total">0.00</span></p>
+        <button class="btn btn-premium w-100" onclick="checkout()">Checkout</button>
+        <button class="btn btn-secondary w-100 mt-2" onclick="closeCart()">Close</button>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2023 Premium Gadgets. All rights reserved. | <a href="#" class="text-light">Privacy Policy</a></p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const products = [
+            { id: 1, name: 'Quantum Smartwatch', price: 299.99, image: 'https://via.placeholder.com/300x250?text=Smartwatch', category: 'Wearables' },
+            { id: 2, name: 'AI Home Assistant', price: 149.99, image: 'https://via.placeholder.com/300x250?text=Assistant', category: 'Smart Home' },
+            { id: 3, name: 'Luxury Wireless Earbuds', price: 199.99, image: 'https://via.placeholder.com/300x250?text=Earbuds', category: 'Audio' },
+            { id: 4, name: 'VR Headset Pro', price: 399.99, image: 'https://via.placeholder.com/300x250?text=VR', category: 'Gaming' }
+        ];
+
+        const productsGrid = document.getElementById('products-grid');
+        const cartItems = document.getElementById('cart-items');
+        const totalElement = document.getElementById('total');
+        const cartCount = document.getElementById('cart-count');
+        const cartSidebar = document.getElementById('cart-sidebar');
+
+        let cart = [];
+        let total = 0;
+
+        // Render products
+        function renderProducts(filter = '') {
+            productsGrid.innerHTML = '';
+            products.filter(p => p.name.toLowerCase().includes(filter.toLowerCase())).forEach(product => {
+                const col = document.createElement('div');
+                col.className = 'col-md-3 mb-4';
+                col.innerHTML = `
+                    <div class="card product-card">
+                        <img src="${product.image}" class="card-img-top product-img" alt="${product.name}">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">${product.name}</h5>
+                            <p class="card-text">${product.category}</p>
+                            <p class="fw-bold">$${product.price}</p>
+                            <button class="btn btn-premium" onclick="addToCart(${product.id})">Add to Cart</button>
+                        </div>
+                    </div>
+                `;
+                productsGrid.appendChild(col);
+            });
+        }
+        renderProducts();
+
+        // Search functionality
+        document.getElementById('search').addEventListener('input', (e) => renderProducts(e.target.value));
+
+        // Add to cart
+        function addToCart(id) {
+            const product = products.find(p => p.id === id);
+            cart.push(product);
+            total += product.price;
+            updateCart();
+        }
+
+        // Update cart
+        function updateCart() {
+            cartItems.innerHTML = '';
+            cart.forEach((item, index) => {
+                const li = document.createElement('li');
+                li.className = 'list-group-item d-flex justify-content-between align-items-center';
+                li.innerHTML = `${item.name} - $${item.price} <button class="btn btn-sm btn-danger" onclick="removeFromCart(${index})">Remove</button>`;
+                cartItems.appendChild(li);
+            });
+            totalElement.textContent = total.toFixed(2);
+            cartCount.textContent = cart.length;
+        }
+
+        // Remove from cart
+        function removeFromCart(index) {
+            total -= cart[index].price;
+            cart.splice(index, 1);
+            updateCart();
+        }
+
+        // Cart toggle
+        function openCart() { cartSidebar.classList.add('open'); }
+        function closeCart() { cartSidebar.classList.remove('open'); }
+
+        // Checkout
+        function checkout() {
+            alert(`Checkout total: $${total.toFixed(2)}. (Demo - integrate Stripe for real payments.)`);
+            cart = []; total = 0; updateCart(); closeCart();
+        }
+
+        // Login simulation
+        function toggleLogin() {
+            const email = prompt('Enter email:');
+            if (email) alert(`Logged in as ${email} (Demo only).`);
+        }
+    </script>
+</body>
+</html>
